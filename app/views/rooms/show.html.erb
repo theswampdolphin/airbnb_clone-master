@@ -1,0 +1,48 @@
+<%= content_for :title, @room.location %>
+
+<div class="row">
+  <div class="col-md-9">
+    <h1><%= @room.location %></h1>
+    <h4><%= "$" + sprintf('%.2f', @room.price) %></h4>
+
+    <% if current_user == @room.user %>
+      <%= link_to "Add Pictures", new_room_picture_path(@room), class: "btn btn-primary btn-xs" %>
+      <%= link_to "Edit Details", edit_room_path(@room), class: "btn btn-info btn-xs" %>
+      <%= link_to "Delete Room", @room, class: "btn btn-danger btn-xs", confirm: "Are you sure?", method: "DELETE" %>
+    <% end %>
+
+    <%= render @room %>
+  </div>
+
+  <div class="col-md-3 pull-right">
+    <% if current_user && current_user != @room.user %>
+      <%= render 'bookings/form' %>
+    <% end %>
+  </div>
+  <br/>
+  <br/>
+</div>
+
+<h4>Reviews</h4>
+  <div id="ratings">
+  <% if @room.ratings.count > 0 %>
+    <% @room.ratings.each do |rating| %>
+     <p>
+       <% rating.stars.times do %>
+          <%= "\u2605" %>
+       <% end %>
+     </p>
+    <p><%= rating.review %></p>
+    <% end %>
+  <% else %>
+    <h4>This Room has not yet been Rated</h4>
+  <% end %>
+</div>
+<br/>
+<br/>
+
+
+<% if current_user && Booking.room_booked_by_user(@room, current_user) %>
+  <p>Rate this Room</p>
+  <%= render "rating" %>
+<% end %>
